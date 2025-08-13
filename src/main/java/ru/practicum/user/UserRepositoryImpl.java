@@ -15,10 +15,26 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public User findById(long userId) {
+        return users.stream()
+                .filter(user -> user.getId() == userId)
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
     public User save(User user) {
-        user.setId(getId());
+        if (user.getId() == null) {
+            user.setId(getId());
+        }
+        users.removeIf(existingUser -> existingUser.getId().equals(user.getId()));
         users.add(user);
         return user;
+    }
+
+    @Override
+    public void deleteById(long userId) {
+        users.removeIf(user -> user.getId() == userId);
     }
 
     private long getId() {

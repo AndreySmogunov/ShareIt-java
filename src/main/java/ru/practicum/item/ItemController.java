@@ -12,19 +12,27 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<Item> get(@RequestHeader("X-Later-User-Id") long userId) {
+    public List<Item> getItems(@RequestHeader("X-Sharer-User-Id") long userId) {
         return itemService.getItems(userId);
     }
 
     @PostMapping
-    public Item add(@RequestHeader("X-Later-User-Id") Long userId,
-                    @RequestBody Item item) {
+    public Item addNewItem(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody Item item) {
         return itemService.addNewItem(userId, item);
     }
 
-    @DeleteMapping("/{itemId}")
-    public void deleteItem(@RequestHeader("X-Later-User-Id") long userId,
-                           @PathVariable(name="itemId") long itemId) {
-        itemService.deleteItem(userId, itemId);
+    @PatchMapping("/{itemId}")
+    public Item updateItem(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId, @RequestBody Item item) {
+        return itemService.updateItem(userId, itemId, item);
+    }
+
+    @GetMapping("/{itemId}")
+    public Item getItemById(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
+        return itemService.getItemById(userId, itemId);
+    }
+
+    @GetMapping("/search")
+    public List<Item> searchItems(@RequestParam String text) {
+        return itemService.searchItems(text);
     }
 }
