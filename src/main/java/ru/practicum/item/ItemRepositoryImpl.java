@@ -18,8 +18,19 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
+    public Item findByUserIdAndItemId(long userId, long itemId) {
+        return items.stream()
+                .filter(item -> item.getUserId() == userId && item.getId() == itemId)
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
     public Item save(Item item) {
-        item.setId(getId());
+        if (item.getId() == null) {
+            item.setId(getId());
+        }
+        items.removeIf(existingItem -> existingItem.getId().equals(item.getId()));
         items.add(item);
         return item;
     }
@@ -27,6 +38,11 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public void deleteByUserIdAndItemId(long userId, long itemId) {
         items.removeIf(item -> item.getUserId() == userId && item.getId() == itemId);
+    }
+
+    @Override
+    public List<Item> findAll() {
+        return items;
     }
 
     private long getId() {

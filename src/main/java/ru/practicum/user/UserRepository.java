@@ -2,7 +2,9 @@ package ru.practicum.user;
 
 import java.util.List;
 
-interface UserRepository {
+public interface UserRepository {
     List<User> findAll();
+    User findById(long userId);
     User save(User user);
+    void deleteById(long userId);
 }

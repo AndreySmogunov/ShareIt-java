@@ -10,21 +10,35 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
+    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
     @GetMapping
-    public List<Item> get(@RequestHeader("X-Later-User-Id") long userId) {
+    public List<Item> getItems(@RequestHeader(USER_ID_HEADER) long userId) {
         return itemService.getItems(userId);
     }
 
     @PostMapping
-    public Item add(@RequestHeader("X-Later-User-Id") Long userId,
-                    @RequestBody Item item) {
+    public Item addNewItem(@RequestHeader(USER_ID_HEADER) long userId, @RequestBody Item item) {
         return itemService.addNewItem(userId, item);
     }
 
+    @PatchMapping("/{itemId}")
+    public Item updateItem(@RequestHeader(USER_ID_HEADER) long userId, @PathVariable long itemId, @RequestBody Item item) {
+        return itemService.updateItem(userId, itemId, item);
+    }
+
+    @GetMapping("/{itemId}")
+    public Item getItemById(@RequestHeader(USER_ID_HEADER) long userId, @PathVariable long itemId) {
+        return itemService.getItemById(userId, itemId);
+    }
+
     @DeleteMapping("/{itemId}")
-    public void deleteItem(@RequestHeader("X-Later-User-Id") long userId,
-                           @PathVariable(name="itemId") long itemId) {
+    public void deleteItem(@RequestHeader(USER_ID_HEADER) long userId, @PathVariable long itemId) {
         itemService.deleteItem(userId, itemId);
+    }
+
+    @GetMapping("/search")
+    public List<Item> searchItems(@RequestParam String text) {
+        return itemService.searchItems(text);
     }
 }
