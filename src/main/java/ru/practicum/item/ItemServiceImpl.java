@@ -40,6 +40,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public void deleteItem(long userId, long itemId) {
+        itemRepository.deleteByUserIdAndItemId(userId, itemId);
+    }
+
+    @Override
     public List<Item> searchItems(String text) {
         if (text == null || text.isBlank()) {
             return List.of();

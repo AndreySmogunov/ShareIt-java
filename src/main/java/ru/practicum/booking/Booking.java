@@ -1,14 +1,16 @@
 package ru.practicum.booking;
 
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import java.time.LocalDateTime;
 
 @Data
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class Booking {
-    private Long id;
-    private Long itemId;
-    private Long userId;
-    private LocalDateTime start;
-    private LocalDateTime end;
-    private String status;
+    Long id;
+    Long itemId;
+    Long userId;
+    LocalDateTime start;
+    LocalDateTime end;
+    String status;
 }
