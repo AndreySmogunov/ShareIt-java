@@ -1,7 +1,8 @@
-package ru.practicum.item;
+package ru.practicum.item.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "items")
@@ -12,9 +13,9 @@ public class Item {
     private Long id;
 
     @Column(name = "owner_id", nullable = false)
-    private Long userId;
+    private Long ownerId;
 
-    @Column(name = "item_name", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description", nullable = false)
