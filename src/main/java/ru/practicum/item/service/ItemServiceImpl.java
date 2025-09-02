@@ -2,58 +2,72 @@ package ru.practicum.item.service;
 
 import ru.practicum.item.repository.ItemRepository;
 import ru.practicum.booking.repository.BookingRepository;
+import ru.practicum.item.repository.CommentRepository;
 import ru.practicum.item.dto.ItemResponseDto;
+import ru.practicum.item.dto.CommentRequestDto;
+import ru.practicum.item.entity.Comment;
+import ru.practicum.item.entity.Item;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import ru.practicum.item.dto.ItemResponseDto;
-import ru.practicum.booking.entity.Booking;
-
 
 @Service
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
 
-    public ItemServiceImpl(ItemRepository itemRepository, BookingRepository bookingRepository) {
+    public ItemServiceImpl(
+            ItemRepository itemRepository,
+            BookingRepository bookingRepository,
+            CommentRepository commentRepository) {
         this.itemRepository = itemRepository;
         this.bookingRepository = bookingRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Override
     public List<ItemResponseDto> getAllItemsByOwnerId(Long ownerId) {
-        List<ru.practicum.item.entity.Item> items = itemRepository.findByOwnerId(ownerId);
+        List<Item> items = itemRepository.findByOwnerId(ownerId);
         return items.stream()
-                .map(item -> {
-                    ItemResponseDto dto = new ItemResponseDto();
-                    dto.setId(item.getId());
-                    dto.setName(item.getName());
-                    dto.setDescription(item.getDescription());
-                    dto.setAvailable(item.isAvailable());
-
-                    List<ru.practicum.booking.entity.Booking> bookings = bookingRepository.findByItemId(item.getId());
-                    dto.setLastBooking(getLastBooking(bookings));
-                    dto.setNextBooking(getNextBooking(bookings));
-
-                    return dto;
-                })
+                .map(item -> toItemResponseDto(item))
                 .collect(Collectors.toList());
     }
 
-    private ItemResponseDto.BookingInfo getLastBooking(List<ru.practicum.booking.entity.Booking> bookings) {
-        return bookings.stream()
-                .filter(b -> b.getEnd().isBefore(LocalDateTime.now()))
-                .max(Comparator.comparing(ru.practicum.booking.entity.Booking::getEnd))
-                .map(b -> new ItemResponseDto.BookingInfo(b.getStart(), b.getEnd()))
-                .orElse(null);
+    @Override
+    public ItemResponseDto getItemById(Long itemId, Long userId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new RuntimeException("Item not found"));
+        ItemResponseDto dto = toItemResponseDto(item);
+        dto.setComments(commentRepository.findByItemId(itemId));
+        return dto;
     }
 
-    private ItemResponseDto.BookingInfo getNextBooking(List<ru.practicum.booking.entity.Booking> bookings) {
-        return bookings.stream()
-                .filter(b -> b.getStart().isAfter(LocalDateTime.now()))
-                .min(Comparator.comparing(ru.practicum.booking.entity.Booking::getStart))
-                .map(b -> new ItemResponseDto.BookingInfo(b.getStart(), b.getEnd()))
-                .orElse(null);
+    @Override
+    public Comment addComment(Long itemId, Long userId, CommentRequestDto dto) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new RuntimeException("Item not found"));
+
+        // Проверка: пользователь должен арендовать вещь
+        boolean hasBooking = bookingRepository.existsByItemIdAndUserIdAndEndBefore(itemId, userId, LocalDateTime.now());
+        if (!hasBooking) {
+            throw new RuntimeException("You can only comment after renting the item");
+        }
+
+        Comment comment = new Comment();
+        comment.setItemId(itemId);
+        comment.setUserId(userId);
+        comment.setText(dto.getText());
+        comment.setCreated(LocalDateTime.now());
+
+        return commentRepository.save(comment);
+    }
+
+    private ItemResponseDto toItemResponseDto(Item item) {
+        ItemResponseDto dto = new ItemResponseDto();
+        dto.setId(item.getId());
+        dto.setName(item.getName());
+        dto.setDescription(item.getDescription());
+        dto.setAvailable(item.isAvailable());
+        return dto;
     }
 }
