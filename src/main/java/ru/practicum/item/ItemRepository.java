@@ -1,11 +1,11 @@
 package ru.practicum.item;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
+import java.util.Optional;
 
-public interface ItemRepository {
-    List<Item> findByUserId(long userId);
-    Item findByUserIdAndItemId(long userId, long itemId);
-    Item save(Item item);
-    void deleteByUserIdAndItemId(long userId, long itemId);
-    List<Item> findAll();
+public interface ItemRepository extends JpaRepository<Item, Long> {
+    List<Item> findByUserId(Long userId);
+    Optional<Item> findByUserIdAndId(Long userId, Long itemId);
+    void deleteByUserIdAndId(Long userId, Long itemId);
 }

@@ -21,14 +21,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(long userId, User user) {
-        User existingUser = userRepository.findById(userId);
-        if (existingUser != null) {
-            existingUser.setEmail(user.getEmail());
-            existingUser.setName(user.getName());
-            return userRepository.save(existingUser);
-        }
-        return null;
+    public User updateUser(long userId, User updatedUser) {
+        // Используем .orElseThrow() для обработки отсутствующего пользователя
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setName(updatedUser.getName());
+
+        return userRepository.save(existingUser);
     }
 
     @Override
