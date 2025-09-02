@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findByUserId(Long userId);
-    Optional<Item> findByUserIdAndId(Long userId, Long itemId);
-    void deleteByUserIdAndId(Long userId, Long itemId);
+
+    Optional<Item> findByIdAndUserId(Long id, Long userId);
+
+    void deleteByIdAndUserId(Long id, Long userId);
 }

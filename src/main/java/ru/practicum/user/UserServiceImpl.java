@@ -22,7 +22,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(long userId, User updatedUser) {
-        // Используем .orElseThrow() для обработки отсутствующего пользователя
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
