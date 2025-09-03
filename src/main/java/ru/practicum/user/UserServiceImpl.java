@@ -7,16 +7,32 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-class UserServiceImpl implements UserService {
-    private final UserRepository repository;
+public class UserServiceImpl implements UserService {
+    private final UserRepository userRepository;
 
     @Override
     public List<User> getAllUsers() {
-        return repository.findAll();
+        return userRepository.findAll();
     }
 
     @Override
     public User saveUser(User user) {
-        return repository.save(user);
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User updateUser(long userId, User updatedUser) {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setName(updatedUser.getName());
+
+        return userRepository.save(existingUser);
+    }
+
+    @Override
+    public void deleteUser(long userId) {
+        userRepository.deleteById(userId);
     }
 }

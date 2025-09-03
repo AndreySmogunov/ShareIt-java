@@ -2,7 +2,9 @@ package ru.practicum.user;
 
 import java.util.List;
 
-interface UserService {
+public interface UserService {
     List<User> getAllUsers();
     User saveUser(User user);
+    User updateUser(long userId, User user);
+    void deleteUser(long userId);
 }
