@@ -1,36 +1,39 @@
 package ru.practicum.gateway.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 
 public class ItemRequest {
+
     @NotBlank(message = "Название вещи не может быть пустым")
     private String name;
 
+    @NotBlank(message = "Описание вещи не может быть пустым")
     private String description;
 
-    private boolean available;
+    @NotNull(message = "Поле 'available' не может быть null")
+    private Boolean available;
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDescription() {
         return description;
     }
 
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
+    public void setAvailable(Boolean available) {
         this.available = available;
     }
 }
