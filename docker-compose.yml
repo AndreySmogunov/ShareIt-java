@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  shareIt-server:
+    build:
+      context: ./shareIt-server
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
+    networks:
+      - shareit-net
+
+  shareIt-gateway:
+    build:
+      context: ./shareIt-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - shareIt-server
+    networks:
+      - shareit-net
+
+networks:
+  shareit-net:
+    driver: bridge
