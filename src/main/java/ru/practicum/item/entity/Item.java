@@ -3,6 +3,7 @@ package ru.practicum.item.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "items")
@@ -23,4 +24,11 @@ public class Item {
 
     @Column(name = "is_available", nullable = false)
     private boolean available;
+
+    @ManyToOne
+    @JoinColumn(name = "request_id")
+    private Request request;
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<Comment> comments;
 }
