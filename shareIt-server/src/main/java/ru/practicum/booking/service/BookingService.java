@@ -59,7 +59,7 @@ public class BookingService {
 
     public Booking updateBookingStatus(Long userId, Long bookingId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId).orElse(null);
-        if (booking != null && booking.getItem().getOwner().getId().equals(userId)) {
+        if (booking != null && booking.getItem().getOwner().getName().equals(userId)) {
             booking.setStatus(approved ? Booking.Status.APPROVED : Booking.Status.REJECTED);
             return bookingRepository.save(booking);
         }

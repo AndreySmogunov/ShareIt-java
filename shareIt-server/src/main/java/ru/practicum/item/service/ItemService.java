@@ -1,9 +1,11 @@
 package ru.practicum.item.service;
 
-import org.springframework.stereotype.Service;
 import ru.practicum.item.entity.Item;
-import ru.practicum.item.repository.ItemRepository;
 import ru.practicum.user.entity.User;
+import ru.practicum.item.repository.ItemRepository;
+import ru.practicum.user.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import java.util.List;
 
 import java.util.Optional;
 
@@ -19,8 +21,8 @@ public class ItemService {
         return itemRepository.findById(userId);
     }
 
-    public User getItemById(Long itemId) {
-        return itemRepository.findById(itemId).orElse(null).getOwner();
+    public org.apache.catalina.User getItemById(Long itemId) {
+        return (org.apache.catalina.User) itemRepository.findById(itemId).orElse(null).getOwner();
     }
 
     public Item createItem(Item item) {
